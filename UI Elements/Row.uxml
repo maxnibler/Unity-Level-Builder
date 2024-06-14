@@ -1,0 +1,3 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <ui:VisualElement name="row" style="flex-grow: 1; flex-direction: row; display: flex; visibility: visible;" />
+</ui:UXML>
