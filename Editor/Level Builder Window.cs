@@ -10,7 +10,7 @@ namespace LB
     {
         private int _gridHeight = 10;
         private int _gridWidth = 10;
-        private int _tileSize = 3;
+        private float _tileSize;
         private VisualElement[,] _grid;
         private Ajacents[,] _adjacents;
         private bool _active = false;
@@ -18,6 +18,7 @@ namespace LB
         public VisualElement Window;
         private SliderInt _heightSlider;
         private SliderInt _widthSlider;
+        private FloatField _tileSizeField;
         private Color _floorColor = Color.grey;
         private Color _emptyColor;
         private Color _wallColor = Color.black;
@@ -46,6 +47,7 @@ namespace LB
             if (!_active) return;
             if (_gridHeight != _heightSlider.value) updateHeight();
             if (_gridWidth != _widthSlider.value) updateWidth();
+            if (_tileSize != _tileSizeField.value) _tileSize = _tileSizeField.value;
         }
 
         public void Activate()
@@ -62,6 +64,7 @@ namespace LB
 
             this.rootVisualElement.Add(this.Window);
             
+            _tileSizeField = Window.Q<FloatField>(name: "tile_size");
             setupSliders();
             setupPainter();
 

@@ -1,11 +1,15 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
-    <Style src="project://database/Assets/Basic%20Style%20Sheet.uss?fileID=7433441132597879392&amp;guid=be21e88f3193bd34aa05d15797182e2a&amp;type=3#Basic Style Sheet" />
+    <Style src="project://database/Packages/com.maxnibler.levelbuilder/UI%20Elements/Basic%20Style%20Sheet.uss?fileID=7433441132597879392&amp;guid=be21e88f3193bd34aa05d15797182e2a&amp;type=3#Basic Style Sheet" />
     <ui:VisualElement style="flex-grow: 1;">
-        <ui:Label tabindex="-1" text="Grid Dimensions" parse-escape-sequences="true" display-tooltip-when-elided="true" class="Labels" />
-        <ui:SliderInt label="Grid Height" high-value="100" show-input-field="true" name="h_slider" class="Sliders" />
-        <ui:SliderInt label="Grid Width" high-value="100" show-input-field="true" name="w_slider" class="Sliders" />
         <ui:GroupBox>
-            <ui:Foldout text="Prefabs" name="insert_panel" value="false" />
+            <ui:Label tabindex="-1" text="Grid Dimensions" parse-escape-sequences="true" display-tooltip-when-elided="true" class="Labels" />
+            <ui:SliderInt label="Grid Height" high-value="100" show-input-field="true" name="h_slider" class="Sliders" />
+            <ui:SliderInt label="Grid Width" high-value="100" show-input-field="true" name="w_slider" class="Sliders" />
+        </ui:GroupBox>
+        <ui:GroupBox>
+            <ui:Foldout text="Prefabs" name="insert_panel" value="false">
+                <ui:FloatField label="Prefab Tile Size" value="3" name="tile_size" />
+            </ui:Foldout>
         </ui:GroupBox>
         <ui:GroupBox style="flex-direction: row; justify-content: space-around; align-self: auto; align-items: auto;">
             <ui:Button text="Walls" parse-escape-sequences="true" display-tooltip-when-elided="true" name="paint_wall" />
