@@ -1,0 +1,8 @@
+.Labels {
+    -unity-font-style: bold;
+    color: rgb(212, 212, 212);
+}
+
+.Sliders {
+    color: rgb(108, 3, 3);
+}
