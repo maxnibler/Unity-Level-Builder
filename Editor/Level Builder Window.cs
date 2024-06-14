@@ -33,9 +33,13 @@ namespace LB
         public static void ShowWindow()
         {
             LevelBuilder w = (LevelBuilder) EditorWindow.GetWindow(typeof(LevelBuilder));
-            w.rootVisualElement.Clear();
-            w.Activate();
-    }
+        }
+
+        public void CreateGUI()
+        {
+            this.rootVisualElement.Clear();
+            this.Activate();
+        }
 
         void OnGUI()
         {
