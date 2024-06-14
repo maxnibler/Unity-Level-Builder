@@ -534,7 +534,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2264725165458112175}
-  - component: {fileID: 6282007022030092286}
   m_Layer: 0
   m_Name: X Wall
   m_TagString: Untagged
@@ -562,15 +561,3 @@ Transform:
   - {fileID: 7915633853613808052}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6282007022030092286
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7622599225689766997}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 226b38e64099c074691c65ef0c9cf58e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
