@@ -23,6 +23,9 @@ namespace LB
         private Color _wallColor = Color.black;
         private ObjectField _tileSet;
         private Painting _current;
+
+        private const int c_gridSize = 50; // this can be updated directly if you need a larger grid
+
         [MenuItem("Window/Level Builder")]
         public static void ShowWindow()
         {
@@ -106,6 +109,8 @@ namespace LB
             this._heightSlider = this.Window.Q<SliderInt>(name: "h_slider");
             this._widthSlider = this.Window.Q<SliderInt>(name: "w_slider");
 
+            _heightSlider.highValue = c_gridSize;
+            _widthSlider.highValue = c_gridSize;
             _heightSlider.value = 10;
             _widthSlider.value = 10;
         }
@@ -121,9 +126,9 @@ namespace LB
 
         private void clearGrid()
         {
-            for (int i=0; i<100; i++)
+            for (int i=0; i<c_gridSize; i++)
             {
-                for (int j=0; j<100; j++)
+                for (int j=0; j<c_gridSize; j++)
                 {
                     _grid[i,j].style.backgroundColor = _emptyColor;
                     _adjacents[i,j].Reset();
@@ -137,14 +142,14 @@ namespace LB
             VisualTreeAsset rowAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Packages/com.maxnibler.levelbuilder/UI Elements/Row.uxml");
 
             contents.Clear();
-            _grid = new VisualElement[100, 100];
-            _adjacents = new Ajacents[100, 100];
-            for (int i=0; i<100; i++)
+            _grid = new VisualElement[c_gridSize, c_gridSize];
+            _adjacents = new Ajacents[c_gridSize, c_gridSize];
+            for (int i=0; i<c_gridSize; i++)
             {
                 VisualElement row = rowAsset.Instantiate();
                 contents.Add(row);
                 row = row.Q<VisualElement>(name: "row");
-                for (int j=0; j<100; j++)
+                for (int j=0; j<c_gridSize; j++)
                 {
                     _adjacents[i,j] = new Ajacents(0);
                     addGridItem(i, j, row);
@@ -164,9 +169,9 @@ namespace LB
 
         private void updateContents()
         {
-            for (int i=0; i<100; i++)
+            for (int i=0; i<c_gridSize; i++)
             {
-                for (int j=0; j<100; j++)
+                for (int j=0; j<c_gridSize; j++)
                 {
                     setGridVisibility(i, j);
                 }
@@ -252,9 +257,9 @@ namespace LB
         private void generateScene()
         {
             GameObject levelContainer = new GameObject("Level Build");
-            for (int i=0; i<100; i++)
+            for (int i=0; i<c_gridSize; i++)
             {
-                for (int j=0; j<100; j++)
+                for (int j=0; j<c_gridSize; j++)
                 {
                     placeWall(i, j, levelContainer, _grid[i,j].style.backgroundColor == _wallColor);
                     placeFloor(i, j, levelContainer, _grid[i,j].style.backgroundColor == _floorColor);
