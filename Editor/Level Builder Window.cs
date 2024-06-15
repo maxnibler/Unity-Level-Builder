@@ -10,7 +10,6 @@ namespace LB
     {
         private int _gridHeight = 10;
         private int _gridWidth = 10;
-        private float _tileSize;
         private VisualElement[,] _grid;
         private Ajacents[,] _adjacents;
         private bool _active = false;
@@ -22,13 +21,7 @@ namespace LB
         private Color _floorColor = Color.grey;
         private Color _emptyColor;
         private Color _wallColor = Color.black;
-        private ObjectField _lineWall;
-        private ObjectField _cornerWall;
-        private ObjectField _tWall;
-        private ObjectField _xWall;
-        private ObjectField _endWall;
-        private ObjectField _column;
-        private ObjectField _floor;
+        private ObjectField _tileSet;
         private Painting _current;
         [MenuItem("Window/Level Builder")]
         public static void ShowWindow()
@@ -47,7 +40,6 @@ namespace LB
             if (!_active) return;
             if (_gridHeight != _heightSlider.value) updateHeight();
             if (_gridWidth != _widthSlider.value) updateWidth();
-            if (_tileSize != _tileSizeField.value) _tileSize = _tileSizeField.value;
         }
 
         public void Activate()
@@ -120,21 +112,11 @@ namespace LB
 
         private void setupObjectFields(VisualElement insertPanel)
         {
-            _lineWall = getNewObjectField("Line Wall", insertPanel);
-            _cornerWall = getNewObjectField("Corner Wall", insertPanel);
-            _tWall = getNewObjectField("T Wall", insertPanel);
-            _xWall = getNewObjectField("X Wall", insertPanel);
-            _endWall = getNewObjectField("End Wall", insertPanel);
-            _column = getNewObjectField("Column", insertPanel);
-            _floor = getNewObjectField("Floor", insertPanel);
-
-            setObjFieldValue("Floor", _floor);
-            setObjFieldValue("Column", _column);
-            setObjFieldValue("Line Wall", _lineWall);
-            setObjFieldValue("T Wall", _tWall);
-            setObjFieldValue("Corner Wall", _cornerWall);
-            setObjFieldValue("X Wall", _xWall);
-            setObjFieldValue("End Wall", _endWall);
+            _tileSet = new ObjectField("Tileset");
+            _tileSet.objectType = typeof(Tileset);
+            insertPanel.Add(_tileSet);
+            Tileset tileset = AssetDatabase.LoadAssetAtPath<Tileset>("Packages/com.maxnibler.levelbuilder/Default Pieces/Default Tileset.asset");
+            _tileSet.value = tileset; 
         }
 
         private void clearGrid()
@@ -149,18 +131,6 @@ namespace LB
             }
         }
 
-        private void setObjFieldValue(string pieceName, ObjectField objField)
-        {
-            GameObject lbp = AssetDatabase.LoadAssetAtPath<GameObject>("Packages/com.maxnibler.levelbuilder/Default Pieces/"+pieceName+".prefab");
-            objField.value = lbp;
-        }
-        private ObjectField getNewObjectField(string label, VisualElement insert)
-        {
-            ObjectField objField = new ObjectField(label);
-            objField.objectType = typeof(GameObject);
-            insert.Add(objField);
-            return objField;
-        }
         private void initGrid()
         {
             VisualElement contents = this.Window.Q<VisualElement>(name: "content_box");
@@ -296,23 +266,37 @@ namespace LB
         {
             if (!floor) return;
             
-            GameObject prefab = (GameObject) _floor.value;
-            GameObject go = (GameObject) PrefabUtility.InstantiatePrefab(prefab);
-            go.transform.position = new Vector3(_tileSize*i, 0, _tileSize*j);
+            Tileset tileSet = (Tileset) _tileSet.value;
+            Tile tile = tileSet.GetTileByType(WP.Floor);
+            Vector3 position = new Vector3(tileSet.TileSize * i, 0, tileSet.TileSize * j);
+            GameObject go = placeTile(tile, position);
+            go.transform.Rotate(Vector3.up, tile.Rotations * 90, Space.Self);
             go.transform.parent = container.transform;
         }
 
         private void placeWall(int i, int j, GameObject container, bool wall)
         {
             if (!wall) return;
+
             WP pieceEnum = selectWP(_adjacents[i,j]);
-            ObjectField objField = selectField(pieceEnum);
-            GameObject prefab = (GameObject) objField.value;
-            GameObject go = (GameObject) PrefabUtility.InstantiatePrefab(prefab);
-            go.transform.position = new Vector3(_tileSize*i, 0, _tileSize*j);
+            
+            Tileset tileSet = (Tileset) _tileSet.value;
+            Tile tile = tileSet.GetTileByType(pieceEnum);
+
+            Vector3 position = new Vector3(tileSet.TileSize * i, 0, tileSet.TileSize * j);
+            GameObject go = placeTile(tile, position);
+
             int rotation = getRotation(pieceEnum, i, j);
-            go.transform.Rotate(Vector3.up, rotation, Space.Self);
+            go.transform.Rotate(Vector3.up, rotation + tile.Rotations * 90, Space.Self);
             go.transform.parent = container.transform;
+        }
+
+        private GameObject placeTile(Tile tile, Vector3 position)
+        {
+            GameObject prefab = tile.prefab;
+            GameObject go = (GameObject) PrefabUtility.InstantiatePrefab(prefab);
+            go.transform.position = position;
+            return go;
         }
 
         private WP selectWP(Ajacents a)
@@ -337,28 +321,6 @@ namespace LB
             return 0;
         }
 
-        private ObjectField selectField(WP pieceEnum)
-        {
-            switch (pieceEnum)
-            {
-                case WP.Column:
-                    return _column;
-                case WP.End:
-                    return _endWall;
-                case WP.Line:
-                    return _lineWall;
-                case WP.Corner:
-                    return _cornerWall;
-                case WP.T:
-                    return _tWall;
-                case WP.X:
-                    return _xWall;
-                default:
-                    Debug.LogError("no wall piece");
-                    break;
-            }
-            return _column;
-        }
 
         private bool lineWall(Ajacents a)
         {
@@ -502,16 +464,6 @@ namespace LB
             }
         }
 
-        private enum WP
-        {
-            Column,
-            End,
-            Line,
-            Corner,
-            T,
-            X,
-        }
-
         private enum Painting
         {
             Wall,
@@ -519,9 +471,4 @@ namespace LB
             Empty,
         }
     }
-
-    // public class LevelBuildPiece : MonoBehaviour
-    // {
-        
-    // }
 }
