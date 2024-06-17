@@ -1,6 +1,6 @@
 {
     "name": "com.maxnibler.levelbuilder",
-    "version": "1.0.1",
+    "version": "1.1.0",
     "displayName": "Level Builder",
     "description": "This is a tool for constructing basic levels as easily as possible",
     "unity": "2022.3",

@@ -3,6 +3,7 @@ using UnityEditor;
 using UnityEngine.UIElements;
 using UnityEditor.UIElements;
 using System.Collections.Generic;
+using System;
 
 namespace LB
 {
@@ -70,12 +71,94 @@ namespace LB
 
             setupObjectFields(insertPanel);
 
+            Button saveButton = new Button();
+            saveButton.clicked += save;
+            saveButton.text = "Save current Level";
+            insertPanel.Add(saveButton);
+            
+            Button loadButton = new Button();
+            loadButton.clicked += open;
+            loadButton.text = "Load Saved Level";
+            insertPanel.Add(loadButton);
+            
             VisualElement contents = this.Window.Q<VisualElement>(name: "content_box");
             contents.Add(_contents);
             initGrid();
             Button generateButton = this.Window.Q<Button>(name: "generate_button");
             generateButton.clicked += generateScene;
             _active = true;
+        }
+
+        private void save()
+        {
+            string path = SaveDataUtil.SavePath();
+            if (path == "") return;
+            int [,] arrayRepresentation = getCurrentArray();
+            SaveDataUtil.SaveArrayToPath(arrayRepresentation, path);
+        }
+
+        private void open()
+        {
+            string path = SaveDataUtil.OpenPath();
+            if (path == "") return;
+            string [] fileData = SaveDataUtil.OpenFileAtPath(path);
+            loadLayoutFromArray(fileData);
+        } 
+
+        private void loadLayoutFromArray(string [] arr)
+        {
+            for (int i=0; i<arr.GetLength(0); i++)
+            {
+                string [] row = arr[i].Split(",");
+                for (int j=0; j<row.GetLength(0); j++)
+                {
+                    Painting tile = paintingFromString(row[j]);
+                    setTileAt(i, j, tile);
+                }
+                // Debug.Log(string.Format("{0}: {1}", i, arr[i]));
+            }
+        }
+
+        private int [,] getCurrentArray()
+        {
+            int [,] arrayRep = new int [c_gridSize,c_gridSize];
+            for (int i=0; i<c_gridSize; i++)
+            {
+                for (int j=0; j<c_gridSize; j++)
+                {
+                    arrayRep[i,j] = (int) getTileType(i,j);
+                }
+            }
+            return arrayRep;
+        }
+
+        private Painting getTileType(int i, int j)
+        {
+            StyleColor c = _grid[i,j].style.backgroundColor; 
+            if (c==_wallColor) return Painting.Wall;
+            if (c==_floorColor) return Painting.Floor;
+            return Painting.Empty;
+        }
+
+        private void setTileAt(int i, int j, Painting tileType)
+        {
+            _current = tileType;
+            bool wall = changeColor((Button) _grid[i,j]);
+            setAdjacents(i, j, wall);
+        }
+
+        private Painting paintingFromString(string s)
+        {
+            try
+            {
+                int i = Int32.Parse(s);
+                return (Painting) i;
+            }
+            catch (FormatException)
+            {
+                Debug.LogError(string.Format("{0} is not a valid int", s));
+            }
+            return Painting.Empty;
         }
 
         private void setupPainter()
@@ -249,8 +332,8 @@ namespace LB
         {
             if (i < 0) return false;
             if (j < 0) return false;
-            if (i > 99) return false;
-            if (j > 99) return false;
+            if (i > c_gridSize-1) return false;
+            if (j > c_gridSize-1) return false;
             return true;
         }
 
