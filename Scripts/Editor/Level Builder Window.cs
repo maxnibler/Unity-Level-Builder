@@ -14,7 +14,6 @@ namespace LB
         private VisualElement[,] _grid;
         private Ajacents[,] _adjacents;
         private bool _active = false;
-        private Label _contents;
         public VisualElement Window;
         private SliderInt _heightSlider;
         private SliderInt _widthSlider;
@@ -56,7 +55,6 @@ namespace LB
 
             this.Window = windowAsset.Instantiate();
 
-            _contents = new Label("x");
 
             this.rootVisualElement.Add(this.Window);
             
@@ -82,7 +80,6 @@ namespace LB
             insertPanel.Add(loadButton);
             
             VisualElement contents = this.Window.Q<VisualElement>(name: "content_box");
-            contents.Add(_contents);
             initGrid();
             Button generateButton = this.Window.Q<Button>(name: "generate_button");
             generateButton.clicked += generateScene;
@@ -425,130 +422,17 @@ namespace LB
                 case WP.Column:
                     return 0;
                 case WP.End:
-                    return endWallDirection(a);
+                    return Rotations.EndWall(a);
                 case WP.Line:
-                    return lineWallDirection(a);
+                    return Rotations.LineWall(a);
                 case WP.Corner:
-                    return cornerWallDirection(a);
+                    return Rotations.CornerWall(a);
                 case WP.T:
-                    return tWallDirection(a);
+                    return Rotations.TWall(a);
                 case WP.X:
-                    return xWallDirection(a);
+                    return Rotations.XWall(a);
                 default:
                     return 0;
-            }
-        }
-
-        private int endWallDirection(Ajacents a)
-        {
-            if (a.Up)
-            {
-                return 90; 
-            }
-            if (a.Right)
-            {
-                return 0; 
-            }
-            if (a.Down)
-            {
-                return 270;
-            }
-            if (a.Left)
-            {
-                return 180;
-            }
-            return 0;
-        }
-
-        private int lineWallDirection(Ajacents a)
-        {
-            if (a.Up)
-            {
-                return 90;
-            }
-            return 0;
-        }
-
-        private int cornerWallDirection(Ajacents a)
-        {
-            if (a.Up)
-            {
-                if (a.Left)
-                {
-                    return 180; 
-                }
-                return 90;
-            }
-            if (a.Left)
-            {
-                return 270;
-            }
-            return 00;
-        }
-
-        private int tWallDirection(Ajacents a)
-        {
-            if (!a.Left)
-            {
-                return 0;
-            }
-            if (!a.Up)
-            {
-                return 270;
-            }
-            if (!a.Right)
-            {
-                return 180;
-            }
-            if (!a.Down)
-            {
-                return 90;
-            }
-            return 0;
-        }
-
-        private int xWallDirection(Ajacents a)
-        {
-            return 0;
-        }
-        private struct Ajacents
-        {
-            public bool Up;
-            public bool Right;
-            public bool Down;
-            public bool Left;
-            public int Count 
-            {
-                get 
-                {
-                    return 0 + b(Up) + b(Down) + b(Right) + b(Left);
-                }
-            }
-
-            private int b(bool dir)
-            {
-                return dir ? 1:0;
-            }
-
-            public Ajacents(int garbage)
-            {
-                Up = false;
-                Right = false;
-                Down = false;
-                Left = false;
-            }
-
-            public override string ToString()
-            {
-                return string.Format("Up: {0}, Down: {1}, Left: {2}, Right: {3}", Up, Down, Left, Right);
-            }
-
-            public void Reset()
-            {
-                Up = false;
-                Right = false;
-                Down = false;
-                Left = false;
             }
         }
 
