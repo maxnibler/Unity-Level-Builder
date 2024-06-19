@@ -198,7 +198,7 @@ namespace LB
             _tileSet = new ObjectField("Tileset");
             _tileSet.objectType = typeof(Tileset);
             insertPanel.Add(_tileSet);
-            Tileset tileset = AssetDatabase.LoadAssetAtPath<Tileset>("Packages/com.maxnibler.levelbuilder/Default Pieces/Default Tileset.asset");
+            Tileset tileset = AssetDatabase.LoadAssetAtPath<Tileset>("Packages/com.maxnibler.levelbuilder/Resources/Default Pieces/Default Tileset.asset");
             _tileSet.value = tileset; 
         }
 
