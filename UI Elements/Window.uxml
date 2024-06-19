@@ -11,6 +11,8 @@
             <ui:Button text="Walls" parse-escape-sequences="true" display-tooltip-when-elided="true" name="paint_wall" />
             <ui:Button text="Floor" parse-escape-sequences="true" display-tooltip-when-elided="true" name="paint_floor" />
             <ui:Button text="Empty" parse-escape-sequences="true" display-tooltip-when-elided="true" name="paint_empty" />
+            <ui:Button text="Door" parse-escape-sequences="true" display-tooltip-when-elided="true" name="paint_door" />
+            <ui:Button text="Column" parse-escape-sequences="true" display-tooltip-when-elided="true" name="paint_column" />
             <ui:Button text="Clear All" parse-escape-sequences="true" display-tooltip-when-elided="true" name="clear_grid" />
         </ui:GroupBox>
         <ui:Button text="Generate Scene" parse-escape-sequences="true" display-tooltip-when-elided="true" name="generate_button" />

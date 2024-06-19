@@ -21,6 +21,8 @@ namespace LB
         private Color _floorColor = Color.grey;
         private Color _emptyColor;
         private Color _wallColor = Color.black;
+        private Color _doorColor = Color.black;
+        private Color _columnColor = Color.black;
         private ObjectField _tileSet;
         private Painting _current;
 
@@ -49,7 +51,9 @@ namespace LB
         {
             _floorColor = Color.black;
             _wallColor = Color.blue;
-            _emptyColor = Color.grey;
+            _emptyColor = Color.clear;
+            _doorColor = Color.magenta;
+            _columnColor = Color.grey;
 
             VisualTreeAsset windowAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Packages/com.maxnibler.levelbuilder/UI Elements/Window.uxml");
 
@@ -162,28 +166,22 @@ namespace LB
         {
             _current = Painting.Wall;
 
-            Button wallButton = Window.Q<Button>(name: "paint_wall");
-            wallButton.style.backgroundColor = _wallColor;
-            wallButton.clicked += () => 
-            {
-                _current = Painting.Wall;
-            };
-
-            Button floorButton = Window.Q<Button>(name: "paint_floor");
-            floorButton.style.backgroundColor = _floorColor;
-            floorButton.clicked += () =>
-            {
-                _current = Painting.Floor;
-            };
-
-            Button emptyButton = Window.Q<Button>(name: "paint_empty");
-            emptyButton.style.backgroundColor = _emptyColor;
-            emptyButton.clicked += () =>
-            {
-                _current = Painting.Empty;
-            };
+            GetSetButton("paint_empty", _emptyColor, Painting.Empty);
+            GetSetButton("paint_wall", _wallColor, Painting.Wall);
+            GetSetButton("paint_floor", _floorColor, Painting.Floor);
+            GetSetButton("paint_door", _doorColor, Painting.Door);
+            GetSetButton("paint_column", _columnColor, Painting.Column);
         }
 
+        private void GetSetButton(string name, Color color, Painting p)
+        {
+            Button b = Window.Q<Button>(name: name);
+            b.style.backgroundColor = color;
+            b.clicked += () =>
+            {
+                _current = p;
+            };
+        }
         private void setupSliders()
         {
             this._heightSlider = this.Window.Q<SliderInt>(name: "h_slider");
@@ -301,6 +299,12 @@ namespace LB
                 case Painting.Empty:
                     button.style.backgroundColor = _emptyColor;
                     return false;
+                case Painting.Column:
+                    button.style.backgroundColor = _columnColor;
+                    return false;
+                case Painting.Door:
+                    button.style.backgroundColor = _doorColor;
+                    return true;
             }
             return false;
         }
@@ -343,8 +347,49 @@ namespace LB
                 {
                     placeWall(i, j, levelContainer, _grid[i,j].style.backgroundColor == _wallColor);
                     placeFloor(i, j, levelContainer, _grid[i,j].style.backgroundColor == _floorColor);
+                    placeColumn(i, j, levelContainer, _grid[i,j].style.backgroundColor == _columnColor);
+                    placeDoor(i, j, levelContainer, _grid[i,j].style.backgroundColor == _doorColor);
                 }
             }
+        }
+
+        private void placeDoor(int i, int j, GameObject container, bool door)
+        {
+            if (!door) return;
+
+            if (!validDoor(i,j))
+            {
+                placeWall(i,j,container,true);
+                return;
+            }
+
+            Tileset tileSet = (Tileset) _tileSet.value;
+            Tile tile = tileSet.GetTileByType(WP.Door);
+
+            Vector3 position = new Vector3(tileSet.TileSize * i, 0, tileSet.TileSize * j);
+            GameObject go = placeTile(tile, position);
+
+            int rotation = getRotation(WP.Line, i, j);
+            go.transform.Rotate(Vector3.up, rotation + tile.Rotations * 90, Space.Self);
+            go.transform.parent = container.transform;
+        }
+
+        private bool validDoor(int i, int j)
+        {
+            return _adjacents[i,j].Count == 2;
+        }
+
+        private void placeColumn(int i, int j, GameObject container, bool column)
+        {
+            if (!column) return;
+
+            Tileset tileSet = (Tileset) _tileSet.value;
+            Tile tile = tileSet.GetTileByType(WP.Column);
+
+            Vector3 position = new Vector3(tileSet.TileSize * i, 0, tileSet.TileSize * j);
+            GameObject go = placeTile(tile, position);
+            go.transform.Rotate(Vector3.up, tile.Rotations * 90, Space.Self);
+            go.transform.parent = container.transform;
         }
 
         private void placeFloor(int i, int j, GameObject container, bool floor)
@@ -441,6 +486,8 @@ namespace LB
             Wall,
             Floor,
             Empty,
+            Door,
+            Column,
         }
     }
 }

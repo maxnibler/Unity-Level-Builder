@@ -9,5 +9,6 @@ namespace LB
         T,
         X,
         Floor,
+        Door,
     }
 }

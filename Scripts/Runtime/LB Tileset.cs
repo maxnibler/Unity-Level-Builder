@@ -13,6 +13,7 @@ namespace LB
         public Tile XWallTile;
         public Tile ColumnTile;
         public Tile EndWallTile;
+        public Tile DoorTile;
 
         public Tile GetTileByType(WP wp)
         {
@@ -32,6 +33,8 @@ namespace LB
                     return ColumnTile;
                 case WP.End:
                     return EndWallTile;
+                case WP.Door:
+                    return DoorTile;
                 default: 
                     Debug.LogError("WallPiece Type not recognized");
                     return FloorTile;
