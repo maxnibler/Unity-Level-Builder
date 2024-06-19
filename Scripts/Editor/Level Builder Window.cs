@@ -138,6 +138,8 @@ namespace LB
             StyleColor c = _grid[i,j].style.backgroundColor; 
             if (c==_wallColor) return Painting.Wall;
             if (c==_floorColor) return Painting.Floor;
+            if (c==_doorColor) return Painting.Door;
+            if (c==_columnColor) return Painting.Column;
             return Painting.Empty;
         }
 
